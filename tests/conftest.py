@@ -1,11 +1,11 @@
 import pytest
-import flaskapp
+import server
 
 @pytest.fixture
 def client():
     # Prepare before your test
-    flaskapp.app.config["TESTING"] = True
-    with flaskapp.app.test_client() as client:
+    server.app.config["TESTING"] = True
+    with server.app.test_client() as client:
         # Give control to your test
         yield client
     # Cleanup after the test run.

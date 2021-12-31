@@ -19,10 +19,10 @@ def add_user():
 		conn.commit()
 		conn.close()
 	except Exception as exp:
-		print('Exception during adduser: ', exp )
-		return json.dumps({"Result": "Failed"}, 500, {'ContentType':'application/json'})
+		print('Exception during adduser: ', exp)
+		return json.dumps({"Result": "Failed"}, 500, {'ContentType': 'application/json'})
 
-	return json.dumps({"Result": "Success"}), 200, {'ContentType':'application/json'}
+	return json.dumps({"Result": "Success"}), 200, {'ContentType': 'application/json'}
 
 @app.route("/getuser/<username>", methods=['GET'])
 def get_user(username):
@@ -32,9 +32,10 @@ def get_user(username):
 	else:
 		user_info = readuser_and_update_cache(username)
 	if user_info is None:
-		return json.dumps({"Error": "{} not found in system".format(username)}), 404, {'ContentType':'application/json'}
+		return json.dumps({"Error": "{} not found in system".format(username)}), 404, \
+			   {'ContentType': 'application/json'}
 	else:
-		return user_info, 200, {'ContentType':'application/json'}
+		return user_info, 200, {'ContentType': 'application/json'}
 
 @app.route("/addbalance/<username>", methods=['POST'])
 def add_balance(username):
@@ -44,8 +45,8 @@ def add_balance(username):
 	if not r.get(username):
 		user_info = readuser_and_update_cache(username)
 		if user_info == None:
-			return json.dumps({"Result": "Failed", "Error": "{} not found in system".format(username)}), 404, {
-				'ContentType': 'application/json'}
+			return json.dumps({"Result": "Failed", "Error": "{} not found in system".format(username)}), 404, \
+				   {'ContentType': 'application/json'}
 
 	user_info = json.loads(r.get(username))
 	new_balance = int(user_info["balance"]) + to_add
@@ -58,10 +59,12 @@ def get_balance(username):
 	r = redis.Redis(host='localhost', port=6379, db=0)
 
 	if r.get(username) == 0:
-		return json.dumps({"Error": "No balance was found for user {} in system".format(username)}), 404, {'ContentType':'application/json'}
+		return json.dumps({"Error": "No balance was found for user {} in system".format(username)}), 404, \
+			   {'ContentType':'application/json'}
 	else:
 		response = r.get(username)
-		return json.dumps({"name": username, "Balance": int(json.loads(response)["balance"])}), 200, {'ContentType':'application/json'}
+		return json.dumps({"name": username, "Balance": int(json.loads(response)["balance"])}), 200, \
+			   {'ContentType':'application/json'}
 
 def init_SQLDB():
 	try:
@@ -77,9 +80,9 @@ def init_SQLDB():
 	except Exception as exp:
 		print('Exp: ', exp)
 		raise exp
-	print("Finish initializing SQL DB")
+	print("Finish initializing SQL DB...")
 
-def init_Cache():
+def init_cache():
 	try:
 		conn = sqlite3.connect('user.db')
 		c = conn.cursor()
@@ -93,7 +96,7 @@ def init_Cache():
 	r = redis.Redis(host='localhost', port=6379, db=0)
 	for user in users:
 		r.set(user[0], json.dumps({"age": user[1], "email": user[2], "balance": 0, "activities": []}))
-	print("Finish initializing user cache")
+	print("Finish initializing user cache...")
 
 def readuser_and_update_cache(username):
 	try:
@@ -116,5 +119,5 @@ def readuser_and_update_cache(username):
 
 if __name__ == '__main__':
 	init_SQLDB()
-	init_Cache()
+	init_cache()
 	app.run(debug=True)
