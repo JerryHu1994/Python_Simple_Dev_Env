@@ -21,7 +21,7 @@ def add_user():
 		conn.close()
 	except Exception as exp:
 		print('Exception during adduser: ', exp)
-		return json.dumps({"Result": "Failed"}, 500, {'ContentType': 'application/json'})
+		return json.dumps({"Result": "Failed"}), 500, {'ContentType': 'application/json'}
 
 	return json.dumps({"Result": "Success"}), 200, {'ContentType': 'application/json'}
 
@@ -45,9 +45,9 @@ def add_balance(username):
 	r = redis.Redis(host='localhost', port=6379, db=0)
 	if not r.get(username):
 		user_info = utils.readuser_and_update_cache(username)
-		if user_info == None:
-			return json.dumps({"Result": "Failed", "Error": "{} not found in system".format(username)}), 404, \
-				   {'ContentType': 'application/json'}
+		if user_info is None:
+			return json.dumps({"Result": "Failed", "Error": "{} not found in system.".format(username)}), 404, \
+				{'ContentType': 'application/json'}
 
 	user_info = json.loads(r.get(username))
 	new_balance = int(user_info["balance"]) + to_add
@@ -58,13 +58,15 @@ def add_balance(username):
 @app.route("/getbalance/<username>", methods=['GET'])
 def get_balance(username):
 	r = redis.Redis(host='localhost', port=6379, db=0)
-
-	if r.get(username) == 0:
-		return json.dumps({"Error": "No balance was found for user {} in system".format(username)}), 404, \
-			   {'ContentType':'application/json'}
+	user_info = None
+	if not r.get(username):
+		user_info = utils.readuser_and_update_cache(username)
+		if user_info is None:
+			return json.dumps({"Error": "No balance was found for user {} in system.".format(username)}), 404, \
+				{'ContentType': 'application/json'}
 	else:
-		response = r.get(username)
-		return json.dumps({"name": username, "Balance": int(json.loads(response)["balance"])}), 200, \
+		user_info = r.get(username)
+		return json.dumps({"name": username, "Balance": int(json.loads(user_info)["balance"])}), 200, \
 			   {'ContentType':'application/json'}
 
 if __name__ == '__main__':
