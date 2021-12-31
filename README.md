@@ -7,6 +7,7 @@ The project includes the following topics:
 - HTTP client request 
 - UnitTest Framework
 
+# Prerequisite
 ## Install Flask App
 ```
 pip install Flask
@@ -22,6 +23,7 @@ pip install pysqlite3
 pip install redis
 ```
 
+# Execution
 ## How to start Project
 1. Start Redis Server
 ```
