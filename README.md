@@ -1,5 +1,5 @@
 # Python_Simple_Dev_Env
-This is a example project for setting up a simple development environment for python. 
+This is an example project for setting up a simple development environment for python. It can easily be plugged into an interview coding round.
 The project includes the following topics:
 - Spinning up a local flask server
 - Connecting a local SQL DB
